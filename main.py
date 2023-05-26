@@ -28,6 +28,7 @@ cursor_count = 0
 cursor_auto_collect = 1
 cps_timer = pygame.time.get_ticks()
 cps_delay = 1000
+cookies_per_second = 0
 
 
 def collect_cookies():
@@ -87,7 +88,7 @@ while running:
                             cursor = Cursor()
                             cursor_sprite.add(cursor)
                             cursor_count += 1
-                            cursor_cost = int(cursor_cost * 1.5)
+                            cursor_cost = int(cursor_cost + 10)
 
     cookie_sprite.update()
 
@@ -102,7 +103,6 @@ while running:
     window_text = font.render("Buy Cursor (Cost: " + str(cursor_cost) + ")", True, WHITE)
     screen.blit(window_text, (window_x + 10, window_y + 10))
 
-    cookies_per_second = 0
     current_time = pygame.time.get_ticks()
     if current_time - cps_timer >= cps_delay:
         collect_cookies()
