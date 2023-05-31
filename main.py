@@ -29,7 +29,7 @@ click_value = 1
 cursor_cost = 10
 cursor_count = 0
 cursor_auto_collect = 1
-grandma_cost = 100
+grandma_cost = 40
 grandma_count = 0
 cps_timer = pygame.time.get_ticks()
 cps_delay = 1000
@@ -87,6 +87,29 @@ class Grandma(pygame.sprite.Sprite):
         )
 
 
+class Upgrade:
+    def __init__(self, name, description, cost, effect):
+        self.name = name
+        self.description = description
+        self.cost = cost
+        self.effect = effect
+
+
+def increase_click_value(value):
+    global click_value
+    click_value += value
+
+
+def increase_auto_clicker():
+    global cursor_auto_collect
+    cursor_auto_collect += 1
+
+
+def double_grandma_production():
+    global grandma_auto_collect
+    grandma_auto_collect *= 2
+
+
 cookie_sprite = pygame.sprite.Group()
 cursor_sprite = pygame.sprite.Group()
 grandma_sprite = pygame.sprite.Group()
@@ -104,6 +127,13 @@ grandma_window_y = HEIGHT - (HEIGHT // 4) - window_height
 pygame.mixer.music.load("background.wav")
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
+
+upgrades = [
+    Upgrade("Power Click", "Increase the value of each click by 1", 100, lambda: increase_click_value(1)),
+    Upgrade("Auto-clicker", "Automatically generate cookies per second", 500, lambda: increase_auto_clicker()),
+    Upgrade("Double Production", "Double the production of all grandmas", 1000, lambda: double_grandma_production()),
+    # Add more upgrades here...
+]
 
 running = True
 while running:
@@ -128,7 +158,13 @@ while running:
                             grandma = Grandma()
                             grandma_sprite.add(grandma)
                             grandma_count += 1
-                            grandma_cost = int(grandma_cost + 100)
+                            grandma_cost = int(grandma_cost + 40)
+                    elif upgrades_window_y <= event.pos[1] <= upgrades_window_y + window_height:
+                        for upgrade in upgrades:
+                            if upgrade.rect.collidepoint(event.pos) and cookies >= upgrade.cost:
+                                cookies -= upgrade.cost
+                                upgrade.cost *= 2
+                                upgrade.effect()
 
     cookie_sprite.update()
     cursor_sprite.update()
@@ -150,6 +186,16 @@ while running:
     pygame.draw.rect(screen, CYAN, (window_x, cursor_window_y, window_width, window_height))
     grandma_window_text = font.render("Buy Russian (Cost: " + str(grandma_cost) + ")", True, WHITE)
     screen.blit(grandma_window_text, (window_x + 10, cursor_window_y + 10))
+
+    upgrades_window_y = cursor_window_y + window_height + 10
+    upgrade_text_offset = 60
+    for i, upgrade in enumerate(upgrades):
+        upgrade_rect = pygame.Rect(window_x, upgrades_window_y + (i * upgrade_text_offset), window_width, window_height)
+        pygame.draw.rect(screen, CYAN, upgrade_rect)
+        upgrade.rect = upgrade_rect
+
+        upgrade_name_text = font.render(upgrade.name + " (Cost: " + str(upgrade.cost) + ")", True, WHITE)
+        screen.blit(upgrade_name_text, (window_x + 10, upgrades_window_y + (i * upgrade_text_offset) + 10))
 
     current_time = pygame.time.get_ticks()
     if current_time - cps_timer >= cps_delay:
