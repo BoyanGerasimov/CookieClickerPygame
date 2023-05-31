@@ -76,11 +76,14 @@ class Cursor(pygame.sprite.Sprite):
 
 
 class Grandma(pygame.sprite.Sprite):
-    def __init__(self, index):
+    def __init__(self):
         super().__init__()
         self.image = grandma_img
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH - window_width // 2, grandma_window_y - 40 * index)
+        self.rect.center = (
+            random.randint(window_x + 20, window_x + window_width - 20),
+            random.randint(grandma_window_y + 20, grandma_window_y + HEIGHT // 4),
+        )
 
 
 cookie_sprite = pygame.sprite.Group()
@@ -117,7 +120,7 @@ while running:
                     elif cursor_window_y <= event.pos[1] <= cursor_window_y + window_height:
                         if cookies >= grandma_cost:
                             cookies -= grandma_cost
-                            grandma = Grandma(grandma_count)
+                            grandma = Grandma()
                             grandma_sprite.add(grandma)
                             grandma_count += 1
                             grandma_cost = int(grandma_cost + 100)
@@ -127,6 +130,7 @@ while running:
     grandma_sprite.update()
 
     screen.fill(BLACK)
+    pygame.draw.rect(screen, WHITE, (window_x, grandma_window_y - 10, window_width, HEIGHT // 4))
     cookie_sprite.draw(screen)
     cursor_sprite.draw(screen)
     grandma_sprite.draw(screen)
@@ -141,10 +145,6 @@ while running:
     pygame.draw.rect(screen, CYAN, (window_x, cursor_window_y, window_width, window_height))
     grandma_window_text = font.render("Buy Grandma (Cost: " + str(grandma_cost) + ")", True, WHITE)
     screen.blit(grandma_window_text, (window_x + 10, cursor_window_y + 10))
-
-    pygame.draw.rect(screen, WHITE, (WIDTH - window_width - 10, grandma_window_y, window_width, HEIGHT // 4))
-    grandma_count_text = font.render("Grandma Count: " + str(grandma_count), True, BLACK)
-    screen.blit(grandma_count_text, (WIDTH - window_width + 10, grandma_window_y + 10))
 
     current_time = pygame.time.get_ticks()
     if current_time - cps_timer >= cps_delay:
