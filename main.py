@@ -14,14 +14,13 @@ RED = (255, 0, 0)
 CYAN = (0, 100, 100)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Cookie Clicker")
+pygame.display.set_caption("Vodka Clicker")
 
-cookie_img = pygame.image.load("cookie.png")
+cookie_img = pygame.image.load("Vodka.png")
 cookie_img = pygame.transform.scale(cookie_img, (374, 350))
 cursor_img = pygame.image.load("cursor.png")
 cursor_img = pygame.transform.scale(cursor_img, (30, 30))
-grandma_img = pygame.image.load("grandma.png")
-grandma_img = pygame.transform.scale(grandma_img, (80, 80))
+
 
 font = pygame.font.Font(None, 36)
 
@@ -78,7 +77,9 @@ class Cursor(pygame.sprite.Sprite):
 class Grandma(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = grandma_img
+        x = random.randint(0, 1)
+        self.image = pygame.image.load(f"grandma_{x}.png")
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.rect = self.image.get_rect()
         self.rect.center = (
             random.randint(window_x + 20, window_x + window_width - 20),
@@ -99,6 +100,10 @@ window_x = WIDTH - window_width - 50
 window_y = 50
 cursor_window_y = window_y + window_height + 10
 grandma_window_y = HEIGHT - (HEIGHT // 4) - window_height
+
+pygame.mixer.music.load("background.wav")
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1)
 
 running = True
 while running:
@@ -130,12 +135,12 @@ while running:
     grandma_sprite.update()
 
     screen.fill(BLACK)
-    pygame.draw.rect(screen, WHITE, (window_x, grandma_window_y - 10, window_width, HEIGHT // 4))
+    pygame.draw.rect(screen, WHITE, (window_x, grandma_window_y - 10, window_width, HEIGHT // 4 + 50))
     cookie_sprite.draw(screen)
     cursor_sprite.draw(screen)
     grandma_sprite.draw(screen)
 
-    cookie_text = font.render("Cookies: " + str(cookies), True, WHITE)
+    cookie_text = font.render("Vodkas: " + str(cookies), True, WHITE)
     screen.blit(cookie_text, (10, 10))
 
     pygame.draw.rect(screen, CYAN, (window_x, window_y, window_width, window_height))
@@ -143,7 +148,7 @@ while running:
     screen.blit(cursor_window_text, (window_x + 10, window_y + 10))
 
     pygame.draw.rect(screen, CYAN, (window_x, cursor_window_y, window_width, window_height))
-    grandma_window_text = font.render("Buy Grandma (Cost: " + str(grandma_cost) + ")", True, WHITE)
+    grandma_window_text = font.render("Buy Russian (Cost: " + str(grandma_cost) + ")", True, WHITE)
     screen.blit(grandma_window_text, (window_x + 10, cursor_window_y + 10))
 
     current_time = pygame.time.get_ticks()
@@ -152,8 +157,12 @@ while running:
         cookies_per_second = cursor_auto_collect * cursor_count + grandma_count * grandma_auto_collect
         cps_timer = current_time
 
-    cps_text = font.render("Cookies/sec: " + str(cookies_per_second), True, WHITE)
+    cps_text = font.render("Vodkas/sec: " + str(cookies_per_second), True, WHITE)
     screen.blit(cps_text, (10, 60))
+
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.button == 1:
+            pygame.mixer.Sound("click.wav").play()
 
     pygame.display.flip()
 
