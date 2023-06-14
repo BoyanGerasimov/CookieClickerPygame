@@ -14,17 +14,17 @@ RED = (255, 0, 0)
 CYAN = (0, 100, 100)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Vodka Clicker")
+pygame.display.set_caption("Cookie Clicker")
 
-cookie_img = pygame.image.load("Vodka.png")
-cookie_img = pygame.transform.scale(cookie_img, (374, 350))
+cookie_img = pygame.image.load("cookie.png")
+cookie_img = pygame.transform.scale(cookie_img, (512, 512))
 cursor_img = pygame.image.load("cursor.png")
 cursor_img = pygame.transform.scale(cursor_img, (30, 30))
 
 
 font = pygame.font.Font(None, 36)
 
-cookies = 1000000
+cookies = 0
 click_value = 1
 cursor_cost = 10
 cursor_count = 0
@@ -84,8 +84,8 @@ class Cursor(pygame.sprite.Sprite):
     def update(self):
         self.angle += self.speed
 
-        x = cookie.rect.centerx + int((self.radius + 50) * math.cos(self.angle))
-        y = cookie.rect.centery + int((self.radius + 50) * math.sin(self.angle))
+        x = cookie.rect.centerx + int((self.radius + 160) * math.cos(self.angle))
+        y = cookie.rect.centery + int((self.radius + 160) * math.sin(self.angle))
         self.rect.center = (x, y)
 
 
@@ -190,7 +190,7 @@ while running:
     grandma_sprite.draw(screen)
     upgrade_sprite.draw(screen)
 
-    cookie_text = font.render("Vodkas: " + str(cookies), True, WHITE)
+    cookie_text = font.render("Cookies: " + str(cookies), True, WHITE)
     screen.blit(cookie_text, (10, 10))
 
     pygame.draw.rect(screen, CYAN, (window_x, window_y, window_width, window_height))
@@ -198,7 +198,7 @@ while running:
     screen.blit(cursor_window_text, (window_x + 10, window_y + 10))
 
     pygame.draw.rect(screen, CYAN, (window_x, cursor_window_y, window_width, window_height))
-    grandma_window_text = font.render("Buy Russian (Cost: " + str(grandma_cost) + ")", True, WHITE)
+    grandma_window_text = font.render("Buy Grandma (Cost: " + str(grandma_cost) + ")", True, WHITE)
     screen.blit(grandma_window_text, (window_x + 10, cursor_window_y + 10))
 
     pygame.draw.rect(screen, CYAN, (window_x, upgrades_window_y, window_width, 5*window_height))
@@ -211,7 +211,7 @@ while running:
         cookies_per_second = cursor_auto_collect * cursor_count + grandma_count * grandma_auto_collect
         cps_timer = current_time
 
-    cps_text = font.render("Vodkas/sec: " + str(cookies_per_second), True, WHITE)
+    cps_text = font.render("Cookies/sec: " + str(cookies_per_second), True, WHITE)
     screen.blit(cps_text, (10, 60))
 
     if event.type == pygame.MOUSEBUTTONDOWN:
